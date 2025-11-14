@@ -2,12 +2,13 @@ import "./fonts/ys-display/fonts.css";
 import "./style.css";
 
 import { data as sourceData } from "./data/dataset_1.js";
-
+import { initFiltering } from "./components/filtering.js";
 import { initData } from "./data.js";
 import { processFormData } from "./lib/utils.js";
 import { initPagination } from "./components/pagination.js";
 import { initTable } from "./components/table.js";
 import { initSorting } from "./components/sorting.js";
+import { initSearching } from "./components/searching.js";
 // @todo: подключение
 
 // Исходные данные используемые в render()
@@ -38,8 +39,11 @@ function render(action) {
   let state = collectState(); // состояние полей из таблицы
   let result = [...data]; // копируем для последующего изменения
   // @todo: использование
+  result = applySearching(result, state, action);
+  result = applyFiltering(result, state, action)
   result = applySorting(result, state, action);
   result = applyPagination(result, state, action);
+
 
   sampleTable.render(result);
 }
@@ -48,7 +52,7 @@ const sampleTable = initTable(
   {
     tableTemplate: "table",
     rowTemplate: "row",
-    before: ['header'],
+    before: ['search', 'header', 'filter'],
     after: ["pagination"],
   },
   render
@@ -68,10 +72,18 @@ const applyPagination = initPagination(
   }
 );
 
+const applySearching = initSearching('search');
+
+const applyFiltering = initFiltering(sampleTable.filter.elements, {    // передаём элементы фильтра
+    searchBySeller: indexes.sellers                                    // для элемента с именем searchBySeller устанавливаем массив продавцов
+});
+
 const applySorting = initSorting([        // Нам нужно передать сюда массив элементов, которые вызывают сортировку, чтобы изменять их визуальное представление
     sampleTable.header.elements.sortByDate,
     sampleTable.header.elements.sortByTotal
 ]);
+
+
 
 const appRoot = document.querySelector("#app");
 appRoot.appendChild(sampleTable.container);
