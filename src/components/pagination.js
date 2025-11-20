@@ -5,10 +5,8 @@ export const initPagination = (
   createPage
 ) => {
   // @todo: #2.3 — подготовить шаблон кнопки для страницы и очистить контейнер
-
   const pageTemplate = pages.firstElementChild.cloneNode(true); // в качестве шаблона берём первый элемент из контейнера со страницами
-  pages.firstElementChild.remove();
-  // и удаляем его (предполагаем, что там больше ничего, как вариант, можно и всё удалить из pages)
+  pages.firstElementChild.remove(); // и удаляем его (предполагаем, что там больше ничего, как вариант, можно и всё удалить из pages)
   return (data, state, action) => {
     // @todo: #2.1 — посчитать количество страниц, объявить переменные и константы
     const rowsPerPage = state.rowsPerPage; // будем часто обращаться, чтобы короче записывать
@@ -35,6 +33,7 @@ export const initPagination = (
     toRow.textContent = Math.min(page * rowsPerPage, data.length); // До какой строки выводим, если это последняя страница, то отображаем оставшееся количество
     totalRows.textContent = data.length; // Сколько всего строк выводим на всех страницах вместе (после фильтрации будет меньше)
     // @todo: #2.2 — посчитать сколько строк нужно пропустить и получить срез данных
+
     const skip = (page - 1) * rowsPerPage; // сколько строк нужно пропустить
     return data.slice(skip, skip + rowsPerPage); // получаем нужную часть строк (заменяем имеющийся return)
   };
