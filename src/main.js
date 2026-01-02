@@ -13,7 +13,7 @@ import { initSorting } from './components/sorting.js';
 
 
 // Исходные данные используемые в render()
-const {data, ...indexes} = initData(sourceData);
+const api = initData(sourceData);
 
 /**
  * Сбор и обработка полей из таблицы
@@ -36,15 +36,16 @@ return {                                            // расширьте сущ
  * Перерисовка состояния таблицы при любых изменениях
  * @param {HTMLButtonElement?} action
  */
-function render(action) {
+async function render(action) {
     let state = collectState(); // состояние полей из таблицы
-    let result = [...data]; // копируем для последующего изменения
+    let query = {};
     // @todo: использование
-    result = applySearching(result, state, action);
-    result = applyFiltering(result, state, action);
-    result = applySorting(result, state, action)
-    result = applyPagination(result, state, action); //
-    sampleTable.render(result)
+    // result = applySearching(result, state, action);
+    // result = applyFiltering(result, state, action);
+    // result = applySorting(result, state, action)
+    // result = applyPagination(result, state, action); //
+    const { total, items } = await api.getRecords(query);
+    sampleTable.render(items)
 }
 
 const sampleTable = initTable({
@@ -58,9 +59,9 @@ const sampleTable = initTable({
 
 const applySearching = initSearching('search');
 
-const applyFiltering = initFiltering(sampleTable.filter.elements, {    // передаём элементы фильтра
-    searchBySeller: indexes.sellers                                    // для элемента с именем searchBySeller устанавливаем массив продавцов
-});
+// const applyFiltering = initFiltering(sampleTable.filter.elements, {    // передаём элементы фильтра
+//     searchBySeller: indexes.sellers                                    // для элемента с именем searchBySeller устанавливаем массив продавцов
+// });
 
 const applySorting = initSorting([        // Нам нужно передать сюда массив элементов, которые вызывают сортировку, чтобы изменять их визуальное представление
     sampleTable.header.elements.sortByDate,
@@ -84,4 +85,8 @@ const applyPagination = initPagination(
 const appRoot = document.querySelector('#app');
 appRoot.appendChild(sampleTable.container);
 
-render();
+async function init() {
+ const indexes = await api.getIndexes()
+}
+
+init().then(render)
