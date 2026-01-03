@@ -41,7 +41,7 @@ async function render(action) {
     let query = {};
     // @todo: использование
     // result = applySearching(result, state, action);
-    // result = applyFiltering(result, state, action);
+    query = applyFiltering(query, state, action); // result заменяем на query
     // result = applySorting(result, state, action)
     // result = applyPagination(result, state, action); //
      query = applyPagination(query, state, action); // обновляем query
@@ -50,7 +50,7 @@ async function render(action) {
 
     updatePagination(total, query); // перерисовываем пагинатор
     sampleTable.render(items);
-} 
+}
 
 const sampleTable = initTable({
     tableTemplate: 'table',
@@ -58,14 +58,14 @@ const sampleTable = initTable({
     before: ['search', 'header', 'filter'],
     after: ['pagination']
 }, render);
-
 // @todo: инициализация
+const indexes = await api.getIndexes(); // важно обьявить иначе фильтрации не чего будет обработать (вх данные запроса)
 
 const applySearching = initSearching('search');
 
-// const applyFiltering = initFiltering(sampleTable.filter.elements, {    // передаём элементы фильтра
-//     searchBySeller: indexes.sellers                                    // для элемента с именем searchBySeller устанавливаем массив продавцов
-// });
+const {applyFiltering, updateIndexes} = initFiltering(sampleTable.filter.elements, {    // передаём элементы фильтра
+    searchBySeller: indexes.sellers                                 // для элемента с именем searchBySeller устанавливаем массив продавцов
+});
 
 const applySorting = initSorting([        // Нам нужно передать сюда массив элементов, которые вызывают сортировку, чтобы изменять их визуальное представление
     sampleTable.header.elements.sortByDate,
@@ -90,7 +90,12 @@ const appRoot = document.querySelector('#app');
 appRoot.appendChild(sampleTable.container);
 
 async function init() {
- const indexes = await api.getIndexes()
+    const indexes = await api.getIndexes();
+
+
+    updateIndexes(sampleTable.filter.elements, {
+        searchBySeller: indexes.sellers
+    });
 }
 
 init().then(render)

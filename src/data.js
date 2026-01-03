@@ -2,6 +2,17 @@ import {makeIndex} from "./lib/utils.js";
 
 const BASE_URL = 'https://webinars.webdev.education-services.ru/sp7-api';
 
+/**
+ * Инициализирует работу с данными: индексы и записи.
+ * Кэширует результаты и возвращает методы для получения данных.
+ *
+ * @param {any} sourceData - начальные данные (не используется напрямую)
+ * @returns {{
+ *   getIndexes: () => Promise<{sellers: Object, customers: Object}>,
+ *   getRecords: (query: Object, isUpdated?: boolean) => Promise<{ total: number, items: Array }>
+ * }}
+ */
+
 export function initData(sourceData) {
     // переменные для кеширования данных
 let sellers;
@@ -29,6 +40,15 @@ const getIndexes = async () => {
 
     return { sellers, customers };
 }
+
+/**
+ * Загружает записи о продажах по заданным параметрам запроса.
+ * Кэширует результат для предотвращения повторных запросов.
+ *
+ * @param {Object} query - параметры запроса (page, limit, seller_id и др.)
+ * @param {boolean} [isUpdated=false] - флаг, указывающий на необходимость принудительного обновления
+ * @returns {Promise<{total: number, items: Array}>}
+ */
 
 // функция получения записей о продажах с сервера
 const getRecords = async (query, isUpdated = false) => {

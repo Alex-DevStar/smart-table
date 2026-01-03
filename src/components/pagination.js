@@ -1,5 +1,17 @@
 import { getPages } from "../lib/utils.js";
 
+/**
+ * Инициализирует пагинацию и возвращает методы для её применения и обновления
+ *
+ * @param {Object} elements - Объект с DOM-элементами пагинации
+ * @param {HTMLElement} elements.pages - Контейнер для кнопок страниц
+ * @param {HTMLElement} elements.fromRow - Элемент, показывающий номер первой строки
+ * @param {HTMLElement} elements.toRow - Элемент, показывающий номер последней строки
+ * @param {HTMLElement} elements.totalRows - Элемент, показывающий общее количество строк
+ * @param {Function} createPage - Функция создания кнопки страницы: (element, number, isActive) => HTMLElement
+ * @returns {{updatePagination: Function, applyPagination: Function}}
+ */
+
 export const initPagination = (
   { pages, fromRow, toRow, totalRows },
   createPage
