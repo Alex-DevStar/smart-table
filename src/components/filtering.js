@@ -1,5 +1,4 @@
 export function initFiltering(elements) {
-  
   const updateIndexes = (elements, indexes) => {
     Object.keys(indexes).forEach((elementName) => {
       elements[elementName].append(
@@ -13,17 +12,17 @@ export function initFiltering(elements) {
     });
   };
 
-    /**
-     * Строит query-параметры для серверной фильтрации
-     * @param {Object} query - исходный query (например, с пагинацией)
-     * @param {Object} state - объект фильтров (внутреннее состояние)
-     * @param {HTMLElement} [action] - кнопка действия
-     * @returns {Object} новый query
-     */
+  /**
+   * Строит query-параметры для серверной фильтрации
+   * @param {Object} query - исходный query (например, с пагинацией)
+   * @param {Object} state - объект фильтров (внутреннее состояние)
+   * @param {HTMLElement} [action] - кнопка действия
+   * @returns {Object} новый query
+   */
 
   const applyFiltering = (query, state, action) => {
     // @todo: #4.2 — обработать очистку поля
-        // если нажата кнопка очистки поля фильтра
+    // если нажата кнопка очистки поля фильтра
     if (action && action.name === "clear") {
       const container = action.closest(".table-column");
       const input = container.querySelector("input");
@@ -31,7 +30,7 @@ export function initFiltering(elements) {
       state[action.dataset.field] = "";
     }
     // @todo: #4.5 — отфильтровать данные используя компаратор
-        // создаём объект фильтра на основе значений input/select в фильтрах
+    // создаём объект фильтра на основе значений input/select в фильтрах
     const filter = {};
     Object.keys(elements).forEach((key) => {
       if (elements[key]) {
@@ -44,7 +43,7 @@ export function initFiltering(elements) {
         }
       }
     });
-        // если фильтр заполнен — добавляем его к query
+    // если фильтр заполнен — добавляем его к query
     return Object.keys(filter).length
       ? Object.assign({}, query, filter)
       : query; // если в фильтре что-то добавилось, применим к запросу
